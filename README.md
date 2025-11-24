@@ -1,2 +1,2 @@
  ## ℹ️Краткое описание
- Данная версия zapret является форком [оригинального запрета](https://github.com/Flowseal/zapret-discord-youtube).
+ Данная версия zapret является форком [оригинального запрета](https://github.com/Flowseal/zapret-discord-youtube), расширяющим его функциональность и удобство использования.
