@@ -8,6 +8,15 @@ set "LISTS_PATH=%~dp0lists\"
 set "BAT_PATH=%~dp0bat\"
 Set "CONFIG_PATH=%~dp0config\"
 
+:: ==================== ÏÐÎÂÅÐÊÀ ÏÐÀÂ ÀÄÌÈÍÈÑÒÐÀÒÎÐÀ ====================
+if "%1"=="admin" (
+    echo Çàïóñê îò èìåíè àäìèíèñòðàòîðà
+) else (
+    echo Çàïðîñ ïðàâ àäìèíèñòðàòîðà...
+    powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/c \"\"%~f0\" admin\"' -Verb RunAs"
+    exit
+)
+
 :: ==================== ÂÍÅØÍÈÅ ÊÎÌÀÍÄÛ ====================
 if "%~1"=="status_zapret" (
     call :test_service zapret soft
@@ -29,15 +38,6 @@ if "%~1"=="load_game_filter" (
     exit /b
 )
 
-:: ==================== ÏÐÎÂÅÐÊÀ ÏÐÀÂ ÀÄÌÈÍÈÑÒÐÀÒÎÐÀ ====================
-if "%1"=="admin" (
-    echo Çàïóñê îò èìåíè àäìèíèñòðàòîðà
-) else (
-    echo Çàïðîñ ïðàâ àäìèíèñòðàòîðà...
-    powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/c \"\"%~f0\" admin\"' -Verb RunAs"
-    exit
-)
-
 :: ==================== ÃËÀÂÍÎÅ ÌÅÍÞ ====================
 setlocal EnableDelayedExpansion
 :menu
@@ -55,7 +55,7 @@ echo 6. Ïðîâåðèòü îáíîâëåíèÿ
 echo 7. Ïåðåêëþ÷èòü èãðîâîé ôèëüòð (%GameFilterStatus%)
 echo 8. Ôèëüòðû àéïè
 echo 0. Âûéòè
-set /p menu_choice=Ââåäèòå ïàðàìåòð (0-9): 
+set /p menu_choice=Ââåäèòå ïàðàìåòð (0-8): 
 
 if "%menu_choice%"=="1" goto service_install_bat
 if "%menu_choice%"=="2" goto service_install_config
@@ -65,8 +65,6 @@ if "%menu_choice%"=="5" goto service_diagnostics
 if "%menu_choice%"=="6" goto service_check_updates
 if "%menu_choice%"=="7" goto game_switch
 if "%menu_choice%"=="8" goto menu_ip
-if "%menu_choice%"=="8" goto ipset_switch_general
-if "%menu_choice%"=="9" goto ipset_update_general
 if "%menu_choice%"=="0" exit /b
 goto menu
 
@@ -89,6 +87,7 @@ if "%menu_choice%"=="2" goto ipset_switch_gaming
 if "%menu_choice%"=="3" goto ipset_update_both
 if "%menu_choice%"=="0" exit /b
 goto menu
+
 :: ==================== ÓÑÒÀÍÎÂÊÀ ÑËÓÆÁ ====================
 :: Äëÿ *BAT ôàéëîâ
 :service_install_bat
@@ -689,7 +688,9 @@ for /f "tokens=*" %%a in ('type "!selectedFile!"') do (
         )
     )
 )
-:: ÏÐÎÂÅÐÊÀ ÎÁÍÎÂËÅÍÈÉ =======================
+exit /b
+
+:: ==================== ÏÐÎÂÅÐÊÀ ÎÁÍÎÂËÅÍÈÉ ====================
 :service_check_updates
 chcp 1251 > nul
 cls
