@@ -689,6 +689,53 @@ for /f "tokens=*" %%a in ('type "!selectedFile!"') do (
         )
     )
 )
+:: ПРОВЕРКА ОБНОВЛЕНИЙ =======================
+:service_check_updates
+chcp 1251 > nul
+cls
+
+:: Установка версии и URL-адреса
+set "GITHUB_VERSION_URL=https://raw.githubusercontent.com/Witchdima/zapret-discord-youtube/refs/heads/main/.assets/version.txt"
+set "GITHUB_RELEASE_URL=https://github.com/Witchdima/zapret-discord-youtube/releases/tag/"
+set "GITHUB_DOWNLOAD_URL=https://github.com/Witchdima/zapret-discord-youtube/releases/latest/download/zapret-discord-youtube-"
+
+:: Получение последний версию с GitHub
+for /f "delims=" %%A in ('powershell -command "(Invoke-WebRequest -Uri \"%GITHUB_VERSION_URL%\" -Headers @{\"Cache-Control\"=\"no-cache\"} -TimeoutSec 5).Content.Trim()" 2^>nul') do set "GITHUB_VERSION=%%A"
+
+:: Обработка ошибки
+if not defined GITHUB_VERSION (
+    echo Предупреждение: не удалось загрузить последнюю версию. Это предупреждение не влияет на работу zapret
+    timeout /T 9
+    if "%1"=="soft" exit 
+    goto menu
+)
+
+:: Сравнение версий
+if "%LOCAL_VERSION%"=="%GITHUB_VERSION%" (
+    echo Установлена последняя версия: %LOCAL_VERSION%
+    
+    if "%1"=="soft" exit 
+    pause
+    goto menu
+) 
+
+echo Доступна новая версия: %GITHUB_VERSION%
+echo Страница выпуска: %GITHUB_RELEASE_URL%%GITHUB_VERSION%
+
+set "CHOICE="
+set /p "CHOICE=Вы хотите автоматически загрузить новую версию? (Y/N) (по умолчанию: Y) "
+if "%CHOICE%"=="" set "CHOICE=Y"
+if /i "%CHOICE%"=="y" set "CHOICE=Y"
+
+if /i "%CHOICE%"=="Y" (
+    echo Открытие страницы загрузки...
+    start "" "%GITHUB_DOWNLOAD_URL%%GITHUB_VERSION%.rar"
+)
+
+
+if "%1"=="soft" exit 
+pause
+goto menu
 
 :: ==================== СЛУЖЕБНЫЕ ФУНКЦИИ ====================
 :: Игровые фильтры
