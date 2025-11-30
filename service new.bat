@@ -1,21 +1,12 @@
 @echo off
 chcp 1251 > nul
-set "LOCAL_VERSION=1.9.0b"
+set "LOCAL_VERSION=1.9.0D"
 
 :: ==================== ПУТИ ОБРАЩЕНИЯ ====================
 set "BIN_PATH=%~dp0bin\"
 set "LISTS_PATH=%~dp0lists\"
 set "BAT_PATH=%~dp0bat\"
 Set "CONFIG_PATH=%~dp0config\"
-
-:: ==================== ПРОВЕРКА ПРАВ АДМИНИСТРАТОРА ====================
-if "%1"=="admin" (
-    echo Запуск от имени администратора
-) else (
-    echo Запрос прав администратора...
-    powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/c \"\"%~f0\" admin\"' -Verb RunAs"
-    exit
-)
 
 :: ==================== ВНЕШНИЕ КОМАНДЫ ====================
 if "%~1"=="status_zapret" (
@@ -36,6 +27,15 @@ if "%~1"=="check_updates" (
 if "%~1"=="load_game_filter" (
     call :game_switch_status
     exit /b
+)
+
+:: ==================== ПРОВЕРКА ПРАВ АДМИНИСТРАТОРА ====================
+if "%1"=="admin" (
+    echo Запуск от имени администратора
+) else (
+    echo Запрос прав администратора...
+    powershell -Command "Start-Process 'cmd.exe' -ArgumentList '/c \"\"%~f0\" admin\"' -Verb RunAs"
+    exit
 )
 
 :: ==================== ГЛАВНОЕ МЕНЮ ====================
@@ -85,14 +85,13 @@ set /p menu_choice=Введите параметр (0-3):
 if "%menu_choice%"=="1" goto ipset_switch_general
 if "%menu_choice%"=="2" goto ipset_switch_gaming
 if "%menu_choice%"=="3" goto ipset_update_both
-if "%menu_choice%"=="0" exit /b
+if "%menu_choice%"=="0" goto menu
 goto menu
 
 :: ==================== УСТАНОВКА СЛУЖБ ====================
 :: Для *BAT файлов
 :service_install_bat
 cls
-chcp 1251 > nul
 cd /d "%~dp0"
 
 :: Поиск файлов *bat в текущей папке, за исключением файлов, которые начинаются с "service"
@@ -139,7 +138,6 @@ goto create_service_bat
 :: Установка конфигов =============================
 :service_install_config
 cls
-chcp 1251 > nul
 cd /d "%~dp0"
 
 :: Поиск файлов *conf *config в текущей папке, за исключением файлов, которые начинаются с "service"
@@ -231,7 +229,6 @@ goto menu
 :: ==================== УДАЛЕНИЕ СЛУЖБ ====================
 :service_remove
 cls
-chcp 1251 > nul
 
 :: Удаление службы zapret
 set SRVCNAME=zapret
@@ -276,7 +273,6 @@ goto menu
 :: ==================== СТАТУС СЛУЖБ ====================
 :service_status
 cls
-chcp 1251 > nul
 
 sc query "zapret" >nul 2>&1
 if "!errorlevel!"=="0" (
@@ -337,7 +333,6 @@ exit /b
 
 :: ==================== ДИАГНОСТИКА ====================
 :service_diagnostics
-chcp 1251 > nul
 cls
 
 :: Base Filtering Engine
@@ -690,58 +685,9 @@ for /f "tokens=*" %%a in ('type "!selectedFile!"') do (
 )
 exit /b
 
-:: ==================== ПРОВЕРКА ОБНОВЛЕНИЙ ====================
-:service_check_updates
-chcp 1251 > nul
-cls
-
-:: Установка версии и URL-адреса
-set "GITHUB_VERSION_URL=https://raw.githubusercontent.com/Witchdima/zapret-discord-youtube/refs/heads/main/.assets/version.txt"
-set "GITHUB_RELEASE_URL=https://github.com/Witchdima/zapret-discord-youtube/releases/tag/"
-set "GITHUB_DOWNLOAD_URL=https://github.com/Witchdima/zapret-discord-youtube/releases/latest/download/zapret-discord-youtube-"
-
-:: Получение последний версию с GitHub
-for /f "delims=" %%A in ('powershell -command "(Invoke-WebRequest -Uri \"%GITHUB_VERSION_URL%\" -Headers @{\"Cache-Control\"=\"no-cache\"} -TimeoutSec 5).Content.Trim()" 2^>nul') do set "GITHUB_VERSION=%%A"
-
-:: Обработка ошибки
-if not defined GITHUB_VERSION (
-    echo Предупреждение: не удалось загрузить последнюю версию. Это предупреждение не влияет на работу zapret
-    timeout /T 9
-    if "%1"=="soft" exit 
-    goto menu
-)
-
-:: Сравнение версий
-if "%LOCAL_VERSION%"=="%GITHUB_VERSION%" (
-    echo Установлена последняя версия: %LOCAL_VERSION%
-    
-    if "%1"=="soft" exit 
-    pause
-    goto menu
-) 
-
-echo Доступна новая версия: %GITHUB_VERSION%
-echo Страница выпуска: %GITHUB_RELEASE_URL%%GITHUB_VERSION%
-
-set "CHOICE="
-set /p "CHOICE=Вы хотите автоматически загрузить новую версию? (Y/N) (по умолчанию: Y) "
-if "%CHOICE%"=="" set "CHOICE=Y"
-if /i "%CHOICE%"=="y" set "CHOICE=Y"
-
-if /i "%CHOICE%"=="Y" (
-    echo Открытие страницы загрузки...
-    start "" "%GITHUB_DOWNLOAD_URL%%GITHUB_VERSION%.rar"
-)
-
-
-if "%1"=="soft" exit 
-pause
-goto menu
-
 :: ==================== СЛУЖЕБНЫЕ ФУНКЦИИ ====================
 :: Игровые фильтры
 :game_switch_status
-chcp 1251 > nul
 
 set "gameFlagFile=%~dp0bin\game_filter.enabled"
 
@@ -755,7 +701,6 @@ if exist "%gameFlagFile%" (
 exit /b
 
 :game_switch
-chcp 1251 > nul
 cls
 
 if not exist "%gameFlagFile%" (
@@ -791,7 +736,6 @@ if !lineCount!==0 (
 exit /b
 
 :ipset_switch_general
-chcp 1251 > nul
 cls
 
 set "listFile=%~dp0lists\ipset-general.txt"
@@ -864,7 +808,6 @@ call :ipset_switch_status_general
 exit /b
 :: Фильтр айпи gaming
 :ipset_switch_status_gaming
-chcp 1251 > nul
 
 set "listFile=%~dp0lists\ipset-gaming.txt"
 for /f %%i in ('type "%listFile%" 2^>nul ^| find /c /v ""') do set "lineCount=%%i"
@@ -882,7 +825,6 @@ if !lineCount!==0 (
 exit /b
 
 :ipset_switch_gaming
-chcp 1251 > nul
 cls
 
 set "listFile=%~dp0lists\ipset-gaming.txt"
@@ -956,7 +898,6 @@ exit /b
 
 :: Обновление обоих списков айпи
 :ipset_update_both
-chcp 1251 > nul
 cls
 echo Обновление обоих списков айпи...
 call :ipset_update_general
@@ -982,3 +923,50 @@ exit /b
 :PrintYellow
 powershell -Command "Write-Host \"%~1\" -ForegroundColor Yellow"
 exit /b
+
+:: ==================== ПРОВЕРКА ОБНОВЛЕНИЙ ====================
+:service_check_updates
+cls
+
+:: Установка версии и URL-адреса
+set "GITHUB_VERSION_URL=https://raw.githubusercontent.com/Witchdima/zapret-discord-youtube/refs/heads/main/.assets/version.txt"
+set "GITHUB_RELEASE_URL=https://github.com/Witchdima/zapret-discord-youtube/releases/tag/"
+set "GITHUB_DOWNLOAD_URL=https://github.com/Witchdima/zapret-discord-youtube/releases/latest/download/zapret-discord-youtube-"
+
+:: Получение последний версию с GitHub
+for /f "delims=" %%A in ('powershell -command "(Invoke-WebRequest -Uri \"%GITHUB_VERSION_URL%\" -Headers @{\"Cache-Control\"=\"no-cache\"} -TimeoutSec 5).Content.Trim()" 2^>nul') do set "GITHUB_VERSION=%%A"
+
+:: Обработка ошибки
+if not defined GITHUB_VERSION (
+    echo Предупреждение: не удалось загрузить последнюю версию. Это предупреждение не влияет на работу zapret
+    timeout /T 9
+    if "%1"=="soft" exit 
+    goto menu
+)
+
+:: Сравнение версий
+if "%LOCAL_VERSION%"=="%GITHUB_VERSION%" (
+    echo Установлена последняя версия: %LOCAL_VERSION%
+    
+    if "%1"=="soft" exit 
+    pause
+    goto menu
+) 
+
+echo Доступна новая версия: %GITHUB_VERSION%
+echo Страница выпуска: %GITHUB_RELEASE_URL%%GITHUB_VERSION%
+
+set "CHOICE="
+set /p "CHOICE=Вы хотите автоматически загрузить новую версию? (Y/N) (по умолчанию: Y) "
+if "%CHOICE%"=="" set "CHOICE=Y"
+if /i "%CHOICE%"=="y" set "CHOICE=Y"
+
+if /i "%CHOICE%"=="Y" (
+    echo Открытие страницы загрузки...
+    start "" "%GITHUB_DOWNLOAD_URL%%GITHUB_VERSION%.rar"
+)
+
+
+if "%1"=="soft" exit 
+pause
+goto menu
