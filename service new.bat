@@ -1,6 +1,6 @@
 @echo off
 chcp 1251 > nul
-set "LOCAL_VERSION=1.9.0D"
+set "LOCAL_VERSION=1.9.0E"
 
 :: ==================== œ”“» Œ¡–¿Ÿ≈Õ»ﬂ ====================
 set "BIN_PATH=%~dp0bin\"
