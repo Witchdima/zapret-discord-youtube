@@ -1,17 +1,33 @@
-#Игровые CDN
-akamai.net
-akamaized.net
-akamaihd.net
+#Cloudflare
+cloudflareclient.com
+api.cloudflareclient.com
+install.cloudflareclient.com
+login.cloudflareaccess.com
+cloudflarewarp.com
+warp.plus
+argotunnel.com
+trycloudflare.com
+cloudflare.com
+challenges.cloudflare.com
+dash.cloudflare.com
+radar.cloudflare.com
+consent.cloudflare.com
+cdnjs.com
+cdnjs.cloudflare.com
+videodelivery.net
+cloudflarestream.com
+embed.cloudflarestream.com
+cloudflare-dns.com
 cloudflare-ech.com
-cloudfront.com
-cloudfront.net
-edgekey.net
-eaassets-a.akamaihd.net
-eamaster.akamai.com
+cloudflare-quic.com
+workers.dev
+pages.dev
+cloudflare.net
+one.one.one.one
 
 #Amazon
 amazon.com
-amazonpay.com
+amazongames.com
 amazonaws.com
 amazonaws.net
 amazonaws.org
@@ -24,6 +40,7 @@ api.amazon.com
 media-amazon.com
 ssl-images-amazon.com
 images-amazon.com
+cloudfront.com
 cloudfront.net
 
 #Epic

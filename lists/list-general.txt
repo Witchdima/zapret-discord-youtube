@@ -22,11 +22,12 @@ cloudflare-ech.com
 cloudflare-quic.com
 workers.dev
 pages.dev
+cloudflare.net
 one.one.one.one
 
 #Amazon
 amazon.com
-amazonpay.com
+amazongames.com
 amazonaws.com
 amazonaws.net
 amazonaws.org
@@ -39,15 +40,8 @@ api.amazon.com
 media-amazon.com
 ssl-images-amazon.com
 images-amazon.com
+cloudfront.com
 cloudfront.net
-
-#Akamai
-akamai.net
-akamaized.net
-akamaiedge.net
-edgesuite.net
-edgekey.net
-llnwd.net
 
 #Discord
 dis.gd
@@ -73,5 +67,3 @@ discordmerch.com
 discordpartygames.com
 discordsays.com
 discordsez.com
-
-
