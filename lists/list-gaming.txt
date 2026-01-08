@@ -43,16 +43,6 @@ images-amazon.com
 cloudfront.com
 cloudfront.net
 
-#Epic
-unrealtournament.com
-unrealengine.com
-fn.gg
-
-#Fortnite
-fortnite.com
-fortnite-vod.akamaized.net
-fortnite.net
-
 #Xbox
 xbox.com
 xboxlive.com
