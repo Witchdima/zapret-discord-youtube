@@ -1,6 +1,6 @@
 @echo off
 chcp 1251 > nul
-set "LOCAL_VERSION=1.9.1B"
+set "LOCAL_VERSION=1.9.1C"
 
 :: ==================== ПУТИ ОБРАЩЕНИЯ ====================
 set "BIN_PATH=%~dp0bin\"
@@ -46,9 +46,16 @@ setlocal EnableDelayedExpansion
 :menu
 cls
 call :game_switch_status
+call :ipset_switch_status_general
+call :ipset_switch_status_gaming
 
 set "menu_choice=null"
 echo =========  Версия !LOCAL_VERSION!  =========
+echo   Статус:
+call :service_status_quic
+echo [V] Фильтр айпи основной: %IPsetStatusGeneral% 
+echo [V] Фильтр айпи игровой: %IPsetStatusGaming%
+echo =========  Меню  =========
 echo 1. Установка службы
 echo 2. Установка конфига
 echo 3. Удалить службу
@@ -363,6 +370,32 @@ if "%ServiceStatus%"=="RUNNING" (
     call :PrintYellow "!ServiceName! находится в состоянии ОСТАНОВКИ, это может быть вызвано конфликтом с другим обходом. Запустите диагностику для исправления конфликтов"
 ) else if not "%~2"=="soft" (
     call :PrintRed "Служба "%ServiceName%" не запущена."
+)
+
+exit /b
+
+:: ==================== ОТОБРАЖЕНИЕ ИСПОЛЬЗУЕМЫХ КОНФИГОВ ====================
+:service_status_quic
+set "found_config=0"
+
+sc query "zapret" >nul 2>&1
+if "!errorlevel!"=="0" (
+    for /f "tokens=2*" %%A in ('reg query "HKLM\System\CurrentControlSet\Services\zapret" /v zapret-discord-youtube 2^>nul') do (
+        echo [V] Используется бат файл: "%%B"
+        set "found_config=1"
+    )
+)
+
+sc query "zapret_config" >nul 2>&1
+if "!errorlevel!"=="0" (
+    for /f "tokens=2*" %%A in ('reg query "HKLM\System\CurrentControlSet\Services\zapret_config" /v zapret-discord-youtube 2^>nul') do (
+        echo [V] Используется конфиг файл: "%%B"
+        set "found_config=1"
+    )
+)
+
+if "!found_config!"=="0" (
+    echo [X] Не установлена ни одна стратегия
 )
 
 exit /b
@@ -769,7 +802,7 @@ pause
 goto menu
 
 :: ==================== СЛУЖЕБНЫЕ ФУНКЦИИ ====================
-:: Функция статуса
+:: Функция статуса обновления
 :check_updates_switch_status
 set "checkUpdatesFlag=%~dp0utils\check_updates.enabled"
 if exist "%checkUpdatesFlag%" (
@@ -1033,7 +1066,6 @@ exit /b
 :run_tests
 cls
 
-:: Требуется PowerShell 3.0+
 powershell -NoProfile -Command "if ($PSVersionTable -and $PSVersionTable.PSVersion -and $PSVersionTable.PSVersion.Major -ge 3) { exit 0 } else { exit 1 }" >nul 2>&1
 if %errorLevel% neq 0 (
     echo Требуется PowerShell 3.0 или новее.
